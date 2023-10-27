@@ -49,13 +49,13 @@ mod_header_ui <- function(id){
                                           textInput(
                                             inputId = ns("name_login"),
                                             label= "utilisateur",
-                                            value = "user",
+                                            value = "postgres",
                                             placeholder = "Nom utilisateur utilise pour l'acc\u00e8s a la base de donn\u00e9es."
                                           ),
                                           passwordInput(
                                             inputId = ns("pass_login"),
                                             label= "mot de passe",
-                                            value = "password",
+                                            value = "postgres",
                                             placeholder = "Mot de passe utilise pour l'acc\u00e8s a la base de donn\u00e9es."
                                           ),
                                           shinyWidgets::actionBttn(
