@@ -12,6 +12,7 @@ Imports:
     DT,
     golem (>= 0.4.1),
     magrittr,
+    pkgload,
     pool,
     RPostgres,
     shiny (>= 1.7.5.1),
