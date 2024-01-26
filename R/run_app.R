@@ -7,7 +7,7 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
-Stacomizkia <- function(
+run_app <- function(
     onStart = NULL,
     options = list(),
     enableBookmarking = NULL,
