@@ -121,8 +121,6 @@ mod_main_page_server <- function(id,DD){
                        #browser()
                        max_ope <- dbGetQuery(db_connection,query_operation)
                        #browser()
-                       max_ope$ope_date_debut<-format(max_ope$ope_date_debut,'%d/%m/%Y %H:%M:%S')
-                        max_ope$ope_date_fin<-format(max_ope$ope_date_fin,'%d/%m/%Y %H:%M:%S')
                         query_lot<-str_c("select * from ",schema_select,".t_lot_lot where lot_identifiant = (select max(lot_identifiant) from ",schema_select,".t_lot_lot)" )
                         max_lot<-dbGetQuery(db_connection,query_lot)
                         output$max_ope <- renderTable(max_ope)
@@ -142,7 +140,10 @@ mod_main_page_server <- function(id,DD){
 
       if (is.null(input$file_operation))
         return(NULL)
-      df_ope<-read.csv2(inFile_ope$datapath,header = F)
+      df_ope<-read.csv2(inFile_ope$datapath,header = F,fileEncoding="WINDOWS-1252")
+       df_ope[,3]<-as.POSIXct(df_ope[,3],format='%Y/%m/%d %H:%M:%S')
+       df_ope[,4]<-as.POSIXct(df_ope[,4],format='%Y/%m/%d %H:%M:%S')
+       spsComps::shinyCatch(validate(need(as.POSIXct(df_ope[3,]),"Date debut opé vide")))
       return(df_ope)
     })
 
@@ -157,7 +158,7 @@ mod_main_page_server <- function(id,DD){
         if(is.null(data_ope))
           return(NULL)
         else(colnames(data_ope)<-col_names_operation)
-
+       # spsComps::shinyCatch(validate(need(as.POSIXct(data_ope$ope_date_debut),"Date debut opé vide")))
         output$import_operation <- DT::renderDT(
           DT::datatable(
             data_ope      ,
@@ -174,7 +175,8 @@ mod_main_page_server <- function(id,DD){
             )
 
           ) %>% DT::formatDate(3, "toLocaleString") %>%
-            DT::formatDate(4, "toLocaleString"))
+            DT::formatDate(4, "toLocaleString")
+          )
 
       },  # fin shiny catch
       blocking_level = "error")},
@@ -190,7 +192,7 @@ mod_main_page_server <- function(id,DD){
 
       if (is.null(input$file_lot))
         return(NULL)
-      df_lot<-read.csv2(inFile_lot$datapath,header = F)
+      df_lot<-read.csv2(inFile_lot$datapath,header = F,fileEncoding="WINDOWS-1252")
       return(df_lot)
     })
 
@@ -239,7 +241,7 @@ mod_main_page_server <- function(id,DD){
 
       if (is.null(input$file_caract_lot))
         return(NULL)
-      df_caract_lot<-read.csv2(inFile_caract_lot$datapath,header = F)
+      df_caract_lot<-read.csv2(inFile_caract_lot$datapath,header = F,fileEncoding="WINDOWS-1252")
       return(df_caract_lot)
     })
 
@@ -254,9 +256,7 @@ mod_main_page_server <- function(id,DD){
         if(is.null(data_caract_lot))
           return(NULL)
         else(colnames(data_caract_lot)<-col_names_caract_lot)
-
-
-
+       
         output$import_caract_lot <- DT::renderDT(
           DT::datatable(
             data_caract_lot      ,
