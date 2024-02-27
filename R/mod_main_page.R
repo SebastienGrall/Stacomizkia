@@ -141,8 +141,8 @@ mod_main_page_server <- function(id,DD){
       if (is.null(input$file_operation))
         return(NULL)
       df_ope<-read.csv2(inFile_ope$datapath,header = F,fileEncoding="WINDOWS-1252")
-       df_ope[,3]<-as.POSIXct(df_ope[,3],format='%Y/%m/%d %H:%M:%S')
-       df_ope[,4]<-as.POSIXct(df_ope[,4],format='%Y/%m/%d %H:%M:%S')
+       df_ope[,3]<-as.POSIXct(df_ope[,3],format='%Y/%m/%d %H:%M:%S',tz="UTC")
+       df_ope[,4]<-as.POSIXct(df_ope[,4],format='%Y/%m/%d %H:%M:%S',tz="UTC")
 
       return(df_ope)
     })
@@ -174,8 +174,8 @@ mod_main_page_server <- function(id,DD){
               scrolly = T
             )
 
-          ) %>% DT::formatDate(3, "toLocaleString") %>%
-            DT::formatDate(4, "toLocaleString")
+          ) #%>% DT::formatDate(3, "toLocaleString") %>%
+            #DT::formatDate(4, "toLocaleString")
           )
 
       },  # fin shiny catch
