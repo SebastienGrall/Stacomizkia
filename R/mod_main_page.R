@@ -143,7 +143,7 @@ mod_main_page_server <- function(id,DD){
       df_ope<-read.csv2(inFile_ope$datapath,header = F,fileEncoding="WINDOWS-1252")
        df_ope[,3]<-as.POSIXct(df_ope[,3],format='%Y/%m/%d %H:%M:%S')
        df_ope[,4]<-as.POSIXct(df_ope[,4],format='%Y/%m/%d %H:%M:%S')
-       spsComps::shinyCatch(validate(need(as.POSIXct(df_ope[3,]),"Date debut opé vide")))
+
       return(df_ope)
     })
 
@@ -158,7 +158,7 @@ mod_main_page_server <- function(id,DD){
         if(is.null(data_ope))
           return(NULL)
         else(colnames(data_ope)<-col_names_operation)
-       # spsComps::shinyCatch(validate(need(as.POSIXct(data_ope$ope_date_debut),"Date debut opé vide")))
+        spsComps::shinyCatch(validate(need(!is.na(data_ope$ope_dic_identifiant),"pas de code DC sur certaines lignes, vérifier le fichier d'entrée")))
         output$import_operation <- DT::renderDT(
           DT::datatable(
             data_ope      ,
@@ -320,9 +320,12 @@ mod_main_page_server <- function(id,DD){
                       query_max_ope <- str_c("select max(ope_identifiant) from ",schema_select,".t_operation_ope")
                       last_ope_num<-dbGetQuery(db_connection,query_max_ope)
                       last_ope_num<-last_ope_num[1,]
+                      
                       query_max_lot <-str_c("select max(lot_identifiant) from ",schema_select,".t_lot_lot")
                       last_lot_num<-dbGetQuery(db_connection,query_max_lot)
                       last_lot_num<-last_lot_num[1,]
+                      if(is.na(last_ope_num)){last_ope_num=0}else{last_ope_num}
+                      if(is.na(last_lot_num)){last_lot_num=0}else{last_lot_num}
 
                       import_operation<- import_operation %>%
                            mutate(right_ope_identifiant=row_number()) %>%
