@@ -79,11 +79,11 @@ mod_main_page_ui <- function(id){
     shinydashboardPlus::box(title ="Derni\u00e8re op\u00e9ration dans la BDD",
                             collapsible = TRUE,
                             width = 8,
-                            tableOutput(ns("max_ope"))),
+                            DT::DTOutput(ns("max_ope"))),
     shinydashboardPlus::box(title ="Dernier lot dans la BDD",
                             collapsible = TRUE,
                             width = 10,
-                            tableOutput(ns("max_lot"))),
+                            DT::DTOutput(ns("max_lot"))),
 
     shinydashboardPlus::box(title ="Fichier op\u00e9ration \u00e0 importer",
                             collapsible = TRUE,
@@ -123,8 +123,8 @@ mod_main_page_server <- function(id,DD){
                        #browser()
                         query_lot<-str_c("select * from ",schema_select,".t_lot_lot where lot_identifiant = (select max(lot_identifiant) from ",schema_select,".t_lot_lot)" )
                         max_lot<-dbGetQuery(db_connection,query_lot)
-                        output$max_ope <- renderTable(max_ope)
-                        output$max_lot <-renderTable(max_lot)
+                        output$max_ope <- DT::renderDT(DT::datatable(max_ope,options = list(dom = 't',scrollX = TRUE)))
+                        output$max_lot <- DT::renderDT(DT::datatable(max_lot,options = list(dom = 't',scrollX = TRUE)))
 
 
                      },
@@ -368,10 +368,10 @@ mod_main_page_server <- function(id,DD){
                         table="tj_caracteristiquelot_car"
                       )
 
-                      DBI::dbWriteTable(con = db_connection,name = table_ope_import,value = import_operation,append = TRUE)
+                      dplyr::copy_to(dest = db_connection,name = table_ope_import,df = import_operation, append = TRUE, temporary= FALSE)
 
-                      DBI::dbWriteTable(con = db_connection,name = table_lot_import,value = import_lot,append = TRUE)
-                      if(is.null(import_caract_lot)){}else{DBI::dbWriteTable(con = db_connection,name = table_caract_lot_import,value = import_caract_lot,append = TRUE)}
+                      dplyr::copy_to(dest = db_connection,name = table_lot_import,df = import_lot,append = TRUE, temporary= FALSE)
+                      if(is.null(import_caract_lot)){}else{dplyr::copy_to(dest = db_connection,name = table_caract_lot_import,df = import_caract_lot,append = TRUE)}
 
                       shinybusy::remove_modal_spinner()
                       shiny::showModal( shiny::modalDialog( title=paste0("Import effectu\u00e9"),
