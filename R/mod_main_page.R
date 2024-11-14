@@ -371,7 +371,7 @@ mod_main_page_server <- function(id,DD){
                       dplyr::copy_to(dest = db_connection,name = table_ope_import,df = import_operation, append = TRUE, temporary= FALSE)
 
                       dplyr::copy_to(dest = db_connection,name = table_lot_import,df = import_lot,append = TRUE, temporary= FALSE)
-                      if(is.null(import_caract_lot)){}else{dplyr::copy_to(dest = db_connection,name = table_caract_lot_import,df = import_caract_lot,append = TRUE)}
+                      if(is.null(import_caract_lot)){}else{dplyr::copy_to(dest = db_connection,name = table_caract_lot_import,df = import_caract_lot,append = TRUE, temporary= FALSE)}
 
                       shinybusy::remove_modal_spinner()
                       shiny::showModal( shiny::modalDialog( title=paste0("Import effectu\u00e9"),
